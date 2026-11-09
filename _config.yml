@@ -29,3 +29,11 @@ plugins:
   - jekyll-feed
   - jekyll-sitemap
   - jekyll-seo-tag
+
+# ---- Review copy only (this branch is never merged into the real site) ----
+# The review site lives at https://romesh-w.github.io/lsf-website-draft/
+url: "https://romesh-w.github.io"
+baseurl: "/lsf-website-draft"
+# Shows a "Draft for review" banner and asks search engines not to list the site
+draft_review: true
+draft_review_text: "Draft for review only. This is not the live opensource.lk website."
