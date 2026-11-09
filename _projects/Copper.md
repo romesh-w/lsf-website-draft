@@ -2,6 +2,7 @@
 layout: page
 title: Copper
 start_date: 2018-04-01
+era: incubator
 end_date: 2019-08-01
 status: PAST
 summary: Private, secure, scalable email platform designed for government scale deployment

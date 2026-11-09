@@ -1,0 +1,10 @@
+{%- comment -%}
+  Latest news cards for the home page: the newest posts in _posts/ with "type: news".
+  "count" from index.md sets how many to show.
+{%- endcomment -%}
+{%- assign news_count = include.count | default: 3 %}
+{%- assign news_posts = site.posts | where: "type", "news" %}
+{%- if news_posts.size > 0 %}
+{%- assign latest = news_posts | slice: 0, news_count %}
+{%- include post-cards.html posts=latest %}
+{%- endif %}

@@ -1,0 +1,29 @@
+---
+layout: default
+---
+{%- comment -%}
+  A page listing posts from _posts/ as cards, newest first.
+  The page sets "post_types" (for example [news], or [article, blog]) to choose which
+  posts to show, plus a title, intro and an "empty_text" for when there are none yet.
+  Design lives in assets/main.scss.
+{%- endcomment -%}
+{%- assign listed = "" | split: "" %}
+{%- for t in page.post_types %}
+{%- assign of_type = site.posts | where: "type", t %}
+{%- assign listed = listed | concat: of_type %}
+{%- endfor %}
+{%- assign listed = listed | sort: "date" | reverse %}
+<article class="page-shell post-list">
+  <header class="story-hero">
+    <h1 class="story-title">{{ page.title | escape }}</h1>
+    {%- if page.intro %}
+    <p class="story-intro">{{ page.intro | escape }}</p>
+    {%- endif %}
+  </header>
+
+  {%- if listed.size > 0 %}
+  {%- include post-cards.html posts=listed %}
+  {%- elsif page.empty_text %}
+  <p class="post-list-empty">{{ page.empty_text | escape }}</p>
+  {%- endif %}
+</article>

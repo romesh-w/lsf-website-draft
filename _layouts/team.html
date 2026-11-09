@@ -1,0 +1,45 @@
+---
+layout: default
+---
+{%- comment -%}
+  "Our team" page. The groups, their titles and intros come from the page's front
+  matter (team/index.md); the people come from the lists in _data/.
+  The first group (Leadership) gets larger cards. Design lives in assets/main.scss.
+{%- endcomment -%}
+<article class="page-shell team">
+  <header class="story-hero">
+    <h1 class="story-title">{{ page.title | escape }}</h1>
+    {%- if page.intro %}
+    <p class="story-intro">{{ page.intro | escape }}</p>
+    {%- endif %}
+  </header>
+
+  {%- if page.groups.size > 1 %}
+  <nav class="team-jump" aria-label="Team sections">
+    {%- for group in page.groups %}
+    <a href="#{{ group.id }}">{{ group.title | escape }}</a>
+    {%- endfor %}
+  </nav>
+  {%- endif %}
+
+  {%- for group in page.groups %}
+  <section class="team-group{% if forloop.first %} is-featured{% endif %}" id="{{ group.id }}" aria-labelledby="{{ group.id }}-title">
+    <div class="team-group-header">
+      <h2 class="team-group-title" id="{{ group.id }}-title">{{ group.title | escape }}</h2>
+      {%- if group.intro %}
+      <p class="team-group-intro">{{ group.intro | escape }}</p>
+      {%- endif %}
+    </div>
+    <ul class="team-grid">
+      {%- for list_name in group.data %}
+      {%- assign people = site.data[list_name] %}
+      {%- for entry in people %}
+      {%- assign person = entry[1] %}
+      {%- assign person_key = group.id | append: "-" | append: entry[0] %}
+      {%- include person-card.html person=person key=person_key fallback_role=group.default_role %}
+      {%- endfor %}
+      {%- endfor %}
+    </ul>
+  </section>
+  {%- endfor %}
+</article>

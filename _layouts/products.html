@@ -1,0 +1,52 @@
+---
+layout: default
+---
+{%- comment -%}
+  Products page: the current DPI products, as cards, in the order listed in the
+  page's "products" (projects.md). Each card uses the product's own page in _projects/.
+  Design lives in assets/main.scss.
+{%- endcomment -%}
+<article class="page-shell products">
+  <header class="story-hero">
+    <h1 class="story-title">{{ page.title | escape }}</h1>
+    {%- if page.intro %}
+    <p class="story-intro">{{ page.intro | escape }}</p>
+    {%- endif %}
+  </header>
+
+  <ul class="project-grid product-list era-2">
+    {%- for name in page.products %}
+    {%- assign product = site.projects | where: "title", name | first %}
+    {%- if product %}
+    {%- assign image_path = "/" | append: product.image %}
+    {%- assign image_file = site.static_files | where: "path", image_path | first %}
+    <li class="project-card">
+      <a class="project-link" href="{{ product.url | relative_url }}">
+        <span class="project-image">
+          {%- if image_file %}
+          <img src="{{ image_path | relative_url }}" alt="" loading="lazy">
+          {%- else %}
+          <span class="project-image-missing" aria-hidden="true">{{ product.title }}</span>
+          {%- endif %}
+        </span>
+        <span class="project-body">
+          <span class="project-years">Since {{ product.start_date | date: "%Y" }}</span>
+          <span class="project-name">{{ product.title | escape }}</span>
+          {%- if product.summary %}
+          <span class="project-summary">{{ product.summary | escape }}</span>
+          {%- endif %}
+          <span class="project-more">Learn more</span>
+        </span>
+      </a>
+    </li>
+    {%- endif %}
+    {%- endfor %}
+  </ul>
+
+  {%- if page.past_link_url %}
+  <aside class="project-products-note">
+    <p>{{ page.past_note | escape }}</p>
+    <a class="home-bar-link" href="{{ page.past_link_url | relative_url }}">{{ page.past_link_label | escape }}</a>
+  </aside>
+  {%- endif %}
+</article>

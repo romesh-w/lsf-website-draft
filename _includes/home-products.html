@@ -1,0 +1,32 @@
+{%- comment -%}
+  Product cards for the home page. "names" is the list of product titles from index.md,
+  in the order to show them. Each card uses the product's own page in _projects/
+  (its title, image, summary and web address).
+{%- endcomment -%}
+<ul class="product-grid">
+  {%- for name in include.names %}
+  {%- assign product = site.projects | where: "title", name | first %}
+  {%- if product %}
+  {%- assign image_path = "/" | append: product.image %}
+  {%- assign image_file = site.static_files | where: "path", image_path | first %}
+  <li class="product-card">
+    <a class="product-link" href="{{ product.url | relative_url }}">
+      <span class="product-image">
+        {%- if image_file %}
+        <img src="{{ image_path | relative_url }}" alt="" loading="lazy">
+        {%- else %}
+        <span class="product-image-missing" aria-hidden="true">{{ product.title }}</span>
+        {%- endif %}
+      </span>
+      <span class="product-text">
+        <span class="product-name">{{ product.title | escape }}</span>
+        {%- if product.summary %}
+        <span class="product-summary">{{ product.summary | escape }}</span>
+        {%- endif %}
+        <span class="product-cta">Learn more</span>
+      </span>
+    </a>
+  </li>
+  {%- endif %}
+  {%- endfor %}
+</ul>

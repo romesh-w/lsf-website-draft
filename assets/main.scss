@@ -18,6 +18,23 @@
   --brand-rgb: 0, 120, 149;
   --content-max: 1000px;
   --wide-max: 1240px;
+
+  /* Header: red logo block (matches the logo's own red), dark teal bar, darker strip */
+  --mast-red: #8a1616;
+  --mast-bg: #063a4a;
+  --mast-strip: #042b37;
+  --mast-text: rgba(255, 255, 255, 0.82);
+  --mast-text-strong: #ffffff;
+  --mast-accent: #7fd6dd;
+
+  /* Home page bars. The header is the only dark band, so the bars alternate
+     between a light teal and a warm off-white to keep clear contrast with it. */
+  --bar-light-bg: #e6f2f5;
+  --bar-light-text: #0b2e3a;
+  --bar-dark-bg: #faf6f0;
+  --bar-dark-text: #0b2e3a;
+  --bar-dark-muted: #2a4853;
+  --bar-dark-accent: #8a1616;
 }
 
 /* Global shell */
@@ -32,6 +49,8 @@ body {
   margin: 0;
   padding: 0;
   overflow-x: hidden;
+  /* "clip" also stops sideways scrolling, but still lets the menu bar stick to the top */
+  overflow-x: clip;
   background: var(--site-bg);
 }
 
@@ -212,51 +231,668 @@ p {
   background: var(--site-bg);
 }
 
-.home-shell,
 .page-shell {
   max-width: var(--content-max);
   margin: 0 auto;
 }
 
-.home-shell {
-  padding: 0 0 2rem;
-  border-bottom: 1px solid var(--site-border);
+/* Site header (every page): red logo block on the left with an angled edge,
+   then the dark teal menu bar. Stays at the top of the screen while scrolling. */
+.masthead {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  /* Lets the padding below measure the header's own width */
+  container-type: inline-size;
+  display: flex;
+  align-items: stretch;
+  min-height: 76px;
+  background: var(--mast-bg);
+  box-shadow: 0 8px 24px rgba(4, 43, 55, 0.16);
 }
 
-.home-shell h2 {
-  margin-bottom: 0.55rem;
-  color: var(--site-link);
-  font-size: clamp(0.98rem, 1.6vw, 1.14rem);
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-}
-
-.home-shell h1 {
-  max-width: 20ch;
-  margin-bottom: 1rem;
-}
-
-.home-shell p {
-  max-width: 76ch;
-  font-size: clamp(1.04rem, 1.4vw, 1.18rem);
-}
-
-.home-shell p:last-child a {
-  display: inline-flex;
+/* Left padding lines the logo up with the page's content edge.
+   The right edge is cut at an angle for a more modern look. */
+.masthead-brand {
+  display: flex;
   align-items: center;
-  margin: 0.15rem 0.35rem 0.15rem 0;
-  padding: 0.38rem 0.9rem;
-  border: 2px solid var(--site-link);
-  border-radius: 999px;
+  gap: 1rem;
+  padding: 0.6rem 3rem 0.6rem max(3cqw, calc((100cqw - var(--wide-max)) / 2));
+  background: var(--mast-red);
+  color: var(--mast-text-strong);
+  text-decoration: none;
+  clip-path: polygon(0 0, 100% 0, calc(100% - 26px) 100%, 0 100%);
+}
+
+.masthead-brand:visited,
+.masthead-brand:hover,
+.masthead-brand:focus-visible {
+  color: var(--mast-text-strong);
+}
+
+.masthead-brand:focus-visible {
+  outline: 3px solid var(--mast-accent);
+  outline-offset: -3px;
+}
+
+.masthead-logo {
+  flex: 0 0 auto;
+  width: 56px;
+  height: 56px;
+  object-fit: cover;
+}
+
+/* The name, separated from the logo by a fine vertical line */
+.masthead-name {
+  max-width: 9.5em;
+  padding-left: 1rem;
+  border-left: 1px solid rgba(255, 255, 255, 0.35);
+  font-size: 1.02rem;
+  font-weight: 600;
+  line-height: 1.22;
+  letter-spacing: 0.01em;
+}
+
+/* Menu: right-aligned, its last link lines up with the page's right content edge */
+.masthead-nav {
+  flex: 1 1 auto;
+  display: flex;
+  align-items: stretch;
+  justify-content: flex-end;
+  padding: 0 max(3cqw, calc((100cqw - var(--wide-max)) / 2)) 0 1.5rem;
+}
+
+.masthead-nav-trigger,
+.masthead-menu-toggle {
+  display: none;
+}
+
+.masthead-links {
+  display: flex;
+  align-items: stretch;
+  gap: clamp(1.5rem, 3vw, 2.5rem);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.masthead-item {
+  position: relative;
+  display: flex;
+}
+
+/* Small arrow next to menu items that have a drop-down */
+.masthead-caret {
+  width: 11px;
+  height: 11px;
+  margin-left: 0.35rem;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  transition: transform 0.2s ease;
+}
+
+.masthead-item.has-children:hover .masthead-caret,
+.masthead-item.has-children:focus-within .masthead-caret {
+  transform: rotate(180deg);
+}
+
+/* Drop-down panel: appears under the menu item on hover or keyboard focus */
+.masthead-submenu {
+  position: absolute;
+  top: calc(100% - 6px);
+  left: -1rem;
+  z-index: 60;
+  min-width: 13rem;
+  margin: 0;
+  padding: 0.5rem;
+  list-style: none;
+  border: 1px solid rgba(var(--brand-rgb), 0.12);
+  border-radius: 12px;
+  background: #ffffff;
+  box-shadow: 0 18px 40px rgba(4, 43, 55, 0.22);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(6px);
+  transition: opacity 0.18s ease, transform 0.18s ease, visibility 0.18s;
+}
+
+.masthead-item.has-children:hover .masthead-submenu,
+.masthead-item.has-children:focus-within .masthead-submenu {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+.masthead-sublink,
+.masthead-sublink:visited {
+  display: block;
+  padding: 0.6rem 0.85rem;
+  border-radius: 8px;
+  color: var(--bar-light-text);
+  font-size: 0.95rem;
+  font-weight: 500;
+  text-decoration: none;
+}
+
+.masthead-sublink:hover,
+.masthead-sublink:focus-visible {
+  background: var(--bar-light-bg);
   color: var(--site-link);
   text-decoration: none;
+}
+
+.masthead-sublink.is-active {
+  color: var(--site-link);
   font-weight: 600;
 }
 
-.home-shell p:last-child a:hover,
-.home-shell p:last-child a:focus-visible {
-  color: #ffffff;
+.masthead-link,
+.masthead-link:visited {
+  position: relative;
+  display: flex;
+  align-items: center;
+  color: rgba(255, 255, 255, 0.78);
+  font-size: 0.98rem;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  text-decoration: none;
+}
+
+/* A thin line under each link that slides in on hover and stays on the current page */
+.masthead-link::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: calc(50% - 1rem);
+  height: 2px;
+  border-radius: 2px;
+  background: currentColor;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.2s ease;
+}
+
+.masthead-link:hover,
+.masthead-link:focus-visible {
+  color: var(--mast-text-strong);
+  text-decoration: none;
+}
+
+.masthead-link:hover::after,
+.masthead-link:focus-visible::after {
+  transform: scaleX(1);
+}
+
+.masthead-link.is-active {
+  color: var(--mast-text-strong);
+  font-weight: 600;
+}
+
+.masthead-link.is-active::after {
+  background: var(--mast-accent);
+  transform: scaleX(1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .masthead-link::after {
+    transition: none;
+  }
+}
+
+/* Phones and small tablets: smaller logo block, and a menu button that opens a drop-down */
+@media (max-width: 780px) {
+  .masthead {
+    min-height: 64px;
+  }
+
+  .masthead-brand {
+    gap: 0.75rem;
+    padding: 0.5rem 2rem 0.5rem 1rem;
+    clip-path: polygon(0 0, 100% 0, calc(100% - 18px) 100%, 0 100%);
+  }
+
+  .masthead-logo {
+    width: 44px;
+    height: 44px;
+  }
+
+  .masthead-name {
+    padding-left: 0.75rem;
+    font-size: 0.92rem;
+  }
+
+  .masthead-nav {
+    align-items: center;
+    padding: 0 1rem 0 0.5rem;
+  }
+
+  .masthead-menu-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.55rem 0.75rem;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 8px;
+    color: var(--mast-text-strong);
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+  }
+
+  .masthead-menu-bars {
+    width: 16px;
+    height: 2px;
+    background: currentColor;
+    box-shadow: 0 -5px 0 currentColor, 0 5px 0 currentColor;
+  }
+
+  .masthead-links {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    flex-direction: column;
+    gap: 0;
+    padding: 0.5rem 1rem 0.9rem;
+    background: var(--mast-bg);
+    box-shadow: 0 12px 24px rgba(4, 43, 55, 0.25);
+  }
+
+  .masthead-nav-trigger:checked ~ .masthead-links {
+    display: flex;
+  }
+
+  .masthead-link,
+  .masthead-link:visited {
+    padding: 0.75rem 0.25rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .masthead-link::after {
+    display: none;
+  }
+
+  .masthead-link.is-active {
+    color: var(--mast-accent);
+  }
+
+  /* In the phone menu, sub-pages are always listed, indented under their parent */
+  .masthead-item {
+    flex-direction: column;
+  }
+
+  .masthead-caret {
+    display: none;
+  }
+
+  .masthead-submenu {
+    position: static;
+    min-width: 0;
+    padding: 0 0 0.35rem 1rem;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    box-shadow: none;
+    opacity: 1;
+    visibility: visible;
+    transform: none;
+  }
+
+  .masthead-sublink,
+  .masthead-sublink:visited {
+    padding: 0.55rem 0.25rem;
+    color: rgba(255, 255, 255, 0.78);
+  }
+
+  .masthead-sublink:hover,
+  .masthead-sublink:focus-visible {
+    background: transparent;
+    color: #ffffff;
+  }
+
+  .masthead-sublink.is-active {
+    color: var(--mast-accent);
+  }
+}
+
+/* Home page (layout: home) */
+
+/* The home page uses the full wide width (the theme otherwise caps it at about 740px) */
+.layout-home .wrapper {
+  max-width: var(--wide-max);
+}
+
+/* Bars run edge to edge, so the page itself has no padding */
+.layout-home .page-content {
+  padding: 0;
+}
+
+
+/* Every bar fills the whole screen, with its content centred top to bottom */
+.home-bar {
+  display: flex;
+  align-items: center;
+  min-height: 100vh;
+  min-height: 100svh;
+  padding: clamp(3rem, 6vw, 5rem) 0;
+  background: var(--bar-light-bg);
+  color: var(--bar-light-text);
+}
+
+.home-bar-inner {
+  width: min(94%, var(--wide-max));
+}
+
+.home-bar-text p:last-child {
+  margin-bottom: 0;
+}
+
+/* Product cards (Our Products bar): 2 per row, picture on top, name underneath */
+.product-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: clamp(1.25rem, 3vw, 2.5rem);
+  max-width: 62rem;
+  margin: 2rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.product-link,
+.news-link {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  color: inherit;
+  text-decoration: none;
+}
+
+.product-image,
+.news-image {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  border: 1px solid var(--site-border);
+  border-radius: 14px;
+  background: #ffffff;
+  transition: box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+.product-image img {
+  width: 70%;
+  height: 70%;
+  object-fit: contain;
+}
+
+.product-image-missing,
+.news-image-missing {
+  font-size: clamp(1.4rem, 3vw, 2rem);
+  font-weight: 700;
+  color: var(--site-link);
+}
+
+.product-name {
+  margin-top: 0.85rem;
+  font-size: clamp(1.15rem, 1.8vw, 1.4rem);
+  font-weight: 700;
+}
+
+.product-link:hover .product-image,
+.product-link:focus-visible .product-image,
+.news-link:hover .news-image,
+.news-link:focus-visible .news-image {
+  box-shadow: 0 12px 28px rgba(var(--brand-rgb), 0.18);
+  transform: translateY(-3px);
+}
+
+.product-link:hover .product-name,
+.product-link:focus-visible .product-name {
+  color: var(--site-link);
+}
+
+.product-link:focus-visible,
+.news-link:focus-visible {
+  outline: 3px solid var(--site-link-hover);
+  outline-offset: 6px;
+  border-radius: 14px;
+}
+
+@media (max-width: 560px) {
+  .product-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* News cards: 3 per row, picture on top, date, title and summary underneath */
+.news-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: clamp(1.25rem, 2.5vw, 2rem);
+  margin: 2rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* News photos fill the whole picture area */
+.news-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.news-body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  margin-top: 0.9rem;
+}
+
+.news-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.news-source {
+  font-size: 0.85rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  opacity: 0.8;
+}
+
+.news-source::before {
+  content: "·";
+  margin-right: 0.5rem;
+}
+
+/* Text for screen readers only */
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.news-date {
+  font-size: 0.85rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  opacity: 0.8;
+}
+
+.news-title {
+  font-size: clamp(1.1rem, 1.6vw, 1.3rem);
+  font-weight: 700;
+  line-height: 1.3;
+}
+
+.news-summary {
+  line-height: 1.55;
+  opacity: 0.88;
+}
+
+.news-link:hover .news-title,
+.news-link:focus-visible .news-title {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+@media (max-width: 900px) {
+  .news-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 560px) {
+  .news-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Bar text spans the full width of the page */
+.home-bar-inner > * {
+  max-width: none;
+}
+
+.home-bar-eyebrow {
+  margin: 0 0 1rem;
+  font-size: clamp(0.9rem, 1.3vw, 1.05rem);
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--site-link);
+}
+
+.home-bar-heading {
+  margin: 0 0 1.5rem;
+  font-size: clamp(2.2rem, 5vw, 3.75rem);
+  font-weight: 700;
+  line-height: 1.08;
+  letter-spacing: -0.02em;
+  color: inherit;
+}
+
+.home-bar-text p {
+  margin: 0 0 1.15rem;
+  font-size: clamp(1.08rem, 1.5vw, 1.25rem);
+  line-height: 1.65;
+}
+
+.home-bar-text ul {
+  margin: 0.25rem 0 1.6rem;
+  padding: 0;
+  list-style: none;
+}
+
+.home-bar-text li {
+  position: relative;
+  margin: 0 0 1.15rem;
+  padding-left: 1.6rem;
+  font-size: clamp(1.02rem, 1.4vw, 1.15rem);
+  line-height: 1.65;
+}
+
+.home-bar-text li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.62em;
+  width: 0.55rem;
+  height: 0.55rem;
+  border-radius: 50%;
   background: var(--site-link);
+}
+
+.home-bar-text li strong {
+  font-weight: 700;
+}
+
+.home-bar:nth-of-type(even) .home-bar-text li {
+  color: var(--bar-dark-muted);
+}
+
+.home-bar:nth-of-type(even) .home-bar-text li strong {
+  color: var(--bar-dark-text);
+}
+
+.home-bar:nth-of-type(even) .home-bar-text li::before {
+  background: var(--bar-dark-accent);
+}
+
+/* Buttons: two equal columns across the full width (like the text), so buttons are
+   the same size in every bar, line up with the bars above and below, and stay
+   balanced on the page at any screen size */
+.home-bar-links {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.9rem;
+  margin-top: 2.25rem;
+}
+
+.home-bar-links-intro {
+  margin-right: 0.25rem;
+  font-size: clamp(1.02rem, 1.4vw, 1.15rem);
+  font-weight: 600;
+}
+
+/* Outlined pill buttons (filled on hover) */
+.home-bar-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.75rem 1.5rem;
+  border: 2px solid var(--site-link);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--site-link);
+  font-weight: 600;
+  text-align: center;
+  text-decoration: none;
+}
+
+.home-bar-link:visited {
+  color: var(--site-link);
+}
+
+.home-bar-link:hover,
+.home-bar-link:focus-visible {
+  border-color: var(--site-link);
+  background: var(--site-link);
+  color: #ffffff;
+}
+
+.home-bar-link:focus-visible {
+  outline: 3px solid var(--site-link-hover);
+  outline-offset: 3px;
+}
+
+/* Every second bar uses the warm off-white, with small red accents that echo the header */
+.home-bar:nth-of-type(even) {
+  background: var(--bar-dark-bg);
+  color: var(--bar-dark-text);
+}
+
+.home-bar:nth-of-type(even) .home-bar-eyebrow {
+  color: var(--bar-dark-accent);
+}
+
+.home-bar:nth-of-type(even) .home-bar-text p {
+  color: var(--bar-dark-muted);
 }
 
 .page-shell {
@@ -297,36 +933,36 @@ p {
 }
 
 /* About page */
-.page-about .about-jump-links {
+.page-about-history .about-jump-links {
   margin-bottom: 1.5rem;
   padding: 1rem 1.1rem;
   border: 1px solid var(--site-border);
   background: var(--site-surface-muted);
 }
 
-.page-about .about-jump-links p {
+.page-about-history .about-jump-links p {
   margin-bottom: 0.55rem;
 }
 
-.page-about .about-jump-links ul {
+.page-about-history .about-jump-links ul {
   margin: 0;
   padding-left: 1.2rem;
   columns: 2;
   column-gap: 2rem;
 }
 
-.page-about .about-jump-links li {
+.page-about-history .about-jump-links li {
   break-inside: avoid;
   margin-bottom: 0.35rem;
 }
 
-.page-about .about-members tr,
+.page-about-history .about-members tr,
 .page-projects .post-content table tr,
 .page-shell[class*="page-team-"] .post-content table tr {
   grid-template-columns: minmax(220px, 280px) minmax(0, 1fr);
 }
 
-.page-about .about-member-photo,
+.page-about-history .about-member-photo,
 .page-shell[class*="page-team-"] .post-content table td:first-child {
   display: flex;
   align-items: flex-start;
@@ -341,11 +977,11 @@ p {
 }
 
 /* Keep project thumbnails and people portraits separate from the generic table image cap. */
-.page-about .about-member-photo {
+.page-about-history .about-member-photo {
   align-self: start;
 }
 
-.page-about .about-member-image {
+.page-about-history .about-member-image {
   display: block;
   width: min(100%, 180px);
   max-width: 180px;
@@ -486,6 +1122,11 @@ blockquote {
   background: var(--site-surface-muted);
 }
 
+/* On the home page the footer sits directly under the last bar, with no gap */
+.layout-home .site-footer {
+  margin-top: 0;
+}
+
 .site-footer .wrapper.footer-shell {
   width: min(100%, var(--wide-max));
   margin: 0 auto;
@@ -577,7 +1218,6 @@ blockquote {
 
 /* Responsive */
 @media (min-width: 981px) {
-  .home-shell p,
   .page-shell:not(.page-team) .post-content > p,
   .page-shell:not(.page-team) .post-content > ul,
   .page-shell:not(.page-team) .post-content > ol,
@@ -710,8 +1350,14 @@ blockquote {
     padding-top: 1.55rem;
   }
 
-  .home-shell {
-    padding-bottom: 1.5rem;
+  /* On phones, buttons stack and fill the width */
+  .home-bar-links {
+    grid-template-columns: 1fr;
+    width: 100%;
+  }
+
+  .layout-home .page-content {
+    padding-top: 0;
   }
 
   .post-content {
@@ -744,15 +1390,15 @@ blockquote {
 }
 
 @media (max-width: 720px) {
-  .page-about .about-jump-links ul {
+  .page-about-history .about-jump-links ul {
     columns: 1;
   }
 
-  .page-about .about-members tr {
+  .page-about-history .about-members tr {
     grid-template-columns: 1fr;
   }
 
-  .page-about .about-member-image {
+  .page-about-history .about-member-image {
     width: min(100%, 180px);
     margin: 0 auto;
   }
@@ -777,4 +1423,1100 @@ blockquote {
     margin-left: auto;
     margin-right: auto;
   }
+}
+
+/* ==========================================================================
+   Wide pages: the story, team and projects pages use the full wide width
+   ========================================================================== */
+.layout-timeline .wrapper,
+.layout-team .wrapper,
+.layout-our-projects .wrapper,
+.layout-products .wrapper,
+.layout-post-list .wrapper,
+.layout-publications .wrapper {
+  max-width: var(--wide-max);
+}
+
+/* Era colours, used by the timeline and the projects page */
+.era-1 { --era-color: #8a1616; --era-soft: #f6e4e4; }
+.era-2 { --era-color: #007895; --era-soft: #e2f1f5; }
+.era-3 { --era-color: #b56a12; --era-soft: #f8ecdc; }
+.era-4 { --era-color: #3d6f2b; --era-soft: #e6f0df; }
+.era-5 { --era-color: #063a4a; --era-soft: #dde8eb; }
+
+/* Shared page heading for the story, team and projects pages */
+.story-hero {
+  max-width: 48rem;
+  margin: 0 auto 2.25rem;
+  text-align: center;
+}
+
+.story-title {
+  margin: 0 0 0.85rem;
+  font-size: clamp(2.2rem, 4.5vw, 3.2rem);
+  font-weight: 700;
+  letter-spacing: -0.025em;
+  color: var(--bar-light-text);
+}
+
+.story-intro {
+  margin: 0;
+  font-size: clamp(1.05rem, 1.5vw, 1.2rem);
+  line-height: 1.65;
+  color: var(--bar-dark-muted);
+}
+
+/* ---------- Our story: one-screen timeline ----------
+   Five era columns side by side, joined by a coloured bar along the top.
+   Choosing an event shows its story in the panel underneath. */
+.story-board {
+  margin: 0 0 2.5rem;
+}
+
+.story-eras {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.story-era {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+/* The coloured timeline bar, one segment per era, with the era name underneath */
+.story-era-header {
+  position: relative;
+  padding: 1.15rem 0.9rem 0.9rem;
+  border-top: 8px solid var(--era-color);
+}
+
+.story-era:first-child .story-era-header {
+  border-top-left-radius: 0;
+}
+
+.story-era-header::before {
+  content: "";
+  position: absolute;
+  top: -14px;
+  left: 0.9rem;
+  width: 20px;
+  height: 20px;
+  border: 4px solid var(--era-color);
+  border-radius: 50%;
+  background: #ffffff;
+}
+
+.story-era-years {
+  display: block;
+  margin-top: 0.35rem;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--era-color);
+}
+
+.story-era-title {
+  margin: 0.2rem 0 0;
+  font-size: 1.05rem;
+  font-weight: 700;
+  line-height: 1.25;
+  color: var(--bar-light-text);
+}
+
+.story-events {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin: 0;
+  padding: 0.25rem 0.5rem 0;
+  list-style: none;
+}
+
+.story-event-button {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+  width: 100%;
+  padding: 0.7rem 0.8rem;
+  border: 1px solid rgba(var(--brand-rgb), 0.14);
+  border-left: 4px solid var(--era-soft);
+  border-radius: 10px;
+  background: #ffffff;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease, transform 0.15s ease;
+}
+
+.story-event-button:hover,
+.story-event-button:focus-visible {
+  border-color: rgba(var(--brand-rgb), 0.3);
+  border-left-color: var(--era-color);
+  box-shadow: 0 8px 20px rgba(4, 43, 55, 0.1);
+}
+
+.story-event-button:focus-visible {
+  outline: 3px solid var(--site-link-hover);
+  outline-offset: 2px;
+}
+
+.story-event.is-highlight .story-event-button {
+  border-left-color: var(--era-color);
+  background: linear-gradient(90deg, var(--era-soft) 0, #ffffff 70%);
+}
+
+.story-event.is-selected .story-event-button {
+  border-color: var(--era-color);
+  border-left-color: var(--era-color);
+  box-shadow: 0 8px 22px rgba(4, 43, 55, 0.14);
+  transform: translateY(-2px);
+}
+
+.story-event-year {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--era-color);
+}
+
+.story-event-title {
+  font-size: 0.95rem;
+  font-weight: 600;
+  line-height: 1.35;
+  color: var(--bar-light-text);
+}
+
+/* The event's text: shown in the panel on wide screens, under each event on phones */
+.story-event-text {
+  display: none;
+  margin: 0.5rem 0.25rem 0.25rem;
+  font-size: 0.93rem;
+  line-height: 1.55;
+  color: var(--bar-dark-muted);
+}
+
+/* Detail panel under the columns */
+.story-details {
+  margin-top: 2rem;
+}
+
+.story-panel {
+  padding: 1.6rem 1.8rem;
+  border: 1px solid rgba(var(--brand-rgb), 0.14);
+  border-top: 5px solid var(--era-color);
+  border-radius: 16px;
+  background: linear-gradient(180deg, var(--era-soft) 0, #ffffff 7rem);
+  box-shadow: 0 10px 28px rgba(4, 43, 55, 0.08);
+}
+
+.story-board:not(.is-interactive) .story-panel + .story-panel {
+  margin-top: 1rem;
+}
+
+.story-panel-era {
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--era-color);
+}
+
+.story-panel-year {
+  margin: 0.25rem 0 0;
+  font-size: clamp(2rem, 4vw, 2.75rem);
+  font-weight: 700;
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+  color: var(--era-color);
+}
+
+.story-panel-title {
+  margin: 0.35rem 0 0.6rem;
+  font-size: clamp(1.25rem, 2vw, 1.5rem);
+  font-weight: 700;
+  color: var(--bar-light-text);
+}
+
+.story-panel-text {
+  max-width: 60rem;
+  margin: 0;
+  font-size: 1.05rem;
+  line-height: 1.65;
+  color: var(--bar-dark-muted);
+}
+
+.story-panel [hidden],
+.story-panel[hidden] {
+  display: none;
+}
+
+.timeline-link {
+  display: inline-block;
+  margin-top: 0.85rem;
+  color: var(--era-color);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.timeline-link::after {
+  content: " \2192";
+}
+
+.timeline-link:hover,
+.timeline-link:focus-visible {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.story-more {
+  text-align: center;
+}
+
+/* Medium screens: three columns, then two */
+@media (max-width: 1100px) {
+  .story-eras {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    row-gap: 2rem;
+  }
+}
+
+/* Phones: one column; each event shows its story directly, so the panel is not needed */
+@media (max-width: 680px) {
+  .story-eras {
+    grid-template-columns: 1fr;
+    row-gap: 1.5rem;
+  }
+
+  .story-event-text {
+    display: block;
+  }
+
+  .story-event-button {
+    cursor: default;
+  }
+
+  .story-details {
+    display: none;
+  }
+}
+
+/* ---------- Our team ---------- */
+.team-jump {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.5rem;
+  margin: 0 auto 1rem;
+}
+
+.team-jump a {
+  padding: 0.5rem 1rem;
+  border: 1px solid rgba(var(--brand-rgb), 0.3);
+  border-radius: 999px;
+  color: var(--bar-light-text);
+  font-size: 0.92rem;
+  font-weight: 500;
+  text-decoration: none;
+}
+
+.team-jump a:hover,
+.team-jump a:focus-visible {
+  border-color: var(--site-link);
+  background: var(--bar-light-bg);
+  color: var(--site-link);
+}
+
+.team-group {
+  padding: 3rem 0 1rem;
+  scroll-margin-top: 90px;
+}
+
+.team-group + .team-group {
+  border-top: 1px solid rgba(var(--brand-rgb), 0.14);
+}
+
+.team-group-header {
+  max-width: 44rem;
+  margin: 0 auto 2.25rem;
+  text-align: center;
+}
+
+.team-group-title {
+  margin: 0 0 0.5rem;
+  font-size: clamp(1.6rem, 3vw, 2.1rem);
+  font-weight: 700;
+  letter-spacing: -0.015em;
+  color: var(--bar-light-text);
+}
+
+.team-group-intro {
+  margin: 0;
+  color: var(--bar-dark-muted);
+}
+
+.team-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+  gap: 1.5rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.person-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 1.75rem 1.4rem 1.5rem;
+  border: 1px solid rgba(var(--brand-rgb), 0.14);
+  border-radius: 16px;
+  background: #ffffff;
+  box-shadow: 0 6px 20px rgba(4, 43, 55, 0.05);
+  text-align: center;
+  scroll-margin-top: 90px;
+  transition: box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+.person-card:hover {
+  box-shadow: 0 14px 32px rgba(4, 43, 55, 0.12);
+  transform: translateY(-2px);
+}
+
+.person-body {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+
+.person-photo {
+  width: 120px;
+  height: 120px;
+  margin-bottom: 1.1rem;
+  border-radius: 50%;
+  object-fit: cover;
+  object-position: center top;
+  background: var(--bar-light-bg);
+  box-shadow: 0 0 0 4px #ffffff, 0 0 0 6px rgba(var(--brand-rgb), 0.18);
+}
+
+.person-name {
+  margin: 0 0 0.3rem;
+  font-size: 1.15rem;
+  font-weight: 700;
+  line-height: 1.3;
+  color: var(--bar-light-text);
+}
+
+.person-role {
+  margin: 0 0 0.85rem;
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.07em;
+  line-height: 1.45;
+  text-transform: uppercase;
+  color: var(--site-link);
+}
+
+.person-summary {
+  margin: 0 0 1.1rem;
+  font-size: 0.95rem;
+  line-height: 1.6;
+  color: var(--bar-dark-muted);
+}
+
+/* Hide the short summary while the full bio is open */
+.person-card:has(.person-bio[open]) .person-summary {
+  display: none;
+}
+
+.person-bio {
+  width: 100%;
+  margin-top: auto;
+}
+
+.person-bio-toggle {
+  display: inline-block;
+  padding: 0.55rem 1.3rem;
+  border: 1.5px solid var(--site-link);
+  border-radius: 999px;
+  color: var(--site-link);
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  list-style: none;
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.person-bio-toggle::-webkit-details-marker {
+  display: none;
+}
+
+.person-bio-toggle:hover,
+.person-bio-toggle:focus-visible {
+  background: var(--site-link);
+  color: #ffffff;
+}
+
+.person-bio-close,
+.person-bio[open] .person-bio-open {
+  display: none;
+}
+
+.person-bio[open] .person-bio-close {
+  display: inline;
+}
+
+.person-bio-body {
+  margin-top: 1rem;
+  padding: 1rem 1.1rem;
+  border-radius: 12px;
+  background: var(--bar-light-bg);
+  text-align: left;
+  font-size: 0.93rem;
+  line-height: 1.6;
+}
+
+.person-bio-body p {
+  margin: 0 0 0.7rem;
+}
+
+.person-bio-body p:last-child {
+  margin-bottom: 0;
+}
+
+.person-projects,
+.person-more {
+  font-weight: 600;
+}
+
+/* Leadership: larger cards with the photo beside the text */
+.team-group.is-featured .team-grid {
+  grid-template-columns: repeat(auto-fill, minmax(420px, 1fr));
+}
+
+.team-group.is-featured .person-card {
+  flex-direction: row;
+  align-items: flex-start;
+  gap: 1.5rem;
+  padding: 1.75rem;
+  text-align: left;
+}
+
+.team-group.is-featured .person-photo {
+  flex: 0 0 auto;
+  width: 140px;
+  height: 140px;
+  margin: 0;
+}
+
+.team-group.is-featured .person-body {
+  align-items: flex-start;
+}
+
+.team-group.is-featured .person-name {
+  font-size: 1.3rem;
+}
+
+@media (max-width: 560px) {
+  .team-group.is-featured .team-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .team-group.is-featured .person-card {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .team-group.is-featured .person-body {
+    align-items: center;
+  }
+}
+
+/* ---------- Our projects (past projects, grouped by era) ---------- */
+.project-era {
+  margin: 0 0 3rem;
+}
+
+.project-era-header {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 0.35rem 1rem;
+  margin: 0 0 1.5rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 3px solid var(--era-color);
+}
+
+.project-era-years {
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--era-color);
+}
+
+.project-era-title {
+  margin: 0;
+  font-size: clamp(1.4rem, 2.6vw, 1.85rem);
+  font-weight: 700;
+  color: var(--bar-light-text);
+}
+
+.project-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 1.5rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.project-link {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+  border: 1px solid rgba(var(--brand-rgb), 0.14);
+  border-radius: 16px;
+  background: #ffffff;
+  color: inherit;
+  text-decoration: none;
+  box-shadow: 0 6px 20px rgba(4, 43, 55, 0.05);
+  transition: box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+.project-link:hover,
+.project-link:focus-visible {
+  box-shadow: 0 14px 32px rgba(4, 43, 55, 0.12);
+  transform: translateY(-3px);
+  text-decoration: none;
+}
+
+.project-link:focus-visible {
+  outline: 3px solid var(--site-link-hover);
+  outline-offset: 3px;
+}
+
+.project-image {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  aspect-ratio: 16 / 9;
+  background: var(--era-soft);
+}
+
+.project-image img {
+  width: 62%;
+  height: 62%;
+  object-fit: contain;
+}
+
+.project-image-missing {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--era-color);
+}
+
+.project-body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  padding: 1.1rem 1.25rem 1.3rem;
+}
+
+.project-years {
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: var(--era-color);
+}
+
+.project-name {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--bar-light-text);
+}
+
+.project-summary {
+  font-size: 0.93rem;
+  line-height: 1.55;
+  color: var(--bar-dark-muted);
+}
+
+.project-products-note {
+  margin: 1rem 0 0;
+  padding: 2rem;
+  border-radius: 16px;
+  background: var(--bar-light-bg);
+  text-align: center;
+}
+
+.project-products-note p {
+  margin: 0 0 1rem;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--bar-light-text);
+}
+
+/* ---------- Products page ---------- */
+.product-list {
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  margin-bottom: 3rem;
+}
+
+.project-more {
+  margin-top: 0.5rem;
+  color: var(--site-link);
+  font-weight: 600;
+}
+
+.project-more::after {
+  content: " \2192";
+}
+/* ---------- Home page bar graphics ----------
+   Faint decorative drawings behind each bar, themed on Sri Lanka, digital
+   networks and public life. They sit behind the text and never block clicks. */
+.home-bar {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.home-bar-inner {
+  position: relative;
+  z-index: 1;
+}
+
+.home-bar::before {
+  content: "";
+  position: absolute;
+  z-index: 0;
+  pointer-events: none;
+  background-repeat: no-repeat;
+  background-size: contain;
+}
+
+/* Bar 1: Sri Lanka as a connected network of places */
+.home-bar-1::before {
+  top: 50%;
+  right: max(2%, calc((100% - var(--wide-max)) / 2));
+  width: min(34vw, 430px);
+  aspect-ratio: 220 / 300;
+  transform: translateY(-50%);
+  background-image: url("images/decor/island-network.svg");
+  opacity: 0.4;
+}
+
+/* Bar 2: a lotus, a classic Sri Lankan motif */
+.home-bar-2::before {
+  right: -120px;
+  bottom: -140px;
+  width: 560px;
+  aspect-ratio: 1;
+  background-image: url("images/decor/lotus.svg");
+  opacity: 0.55;
+}
+
+/* Bar 3: circuit traces, the digital building blocks behind our products */
+.home-bar-3::before {
+  top: 0;
+  right: 0;
+  width: min(40vw, 520px);
+  aspect-ratio: 320 / 240;
+  background-image: url("images/decor/circuit.svg");
+  background-position: top right;
+  opacity: 0.8;
+}
+
+/* Bar 4: signal waves, news reaching the public */
+.home-bar-4::before {
+  left: -30px;
+  bottom: -30px;
+  width: min(40vw, 460px);
+  aspect-ratio: 1;
+  background-image: url("images/decor/signal.svg");
+  opacity: 0.6;
+}
+
+/* On smaller screens the graphics shrink and fade so they never compete with the text */
+@media (max-width: 980px) {
+  .home-bar-1::before {
+    top: auto;
+    bottom: -40px;
+    width: 300px;
+    transform: none;
+    opacity: 0.22;
+  }
+
+  .home-bar-2::before {
+    width: 380px;
+    opacity: 0.35;
+  }
+
+  .home-bar-3::before,
+  .home-bar-4::before {
+    opacity: 0.4;
+  }
+}
+
+/* ---------- Home page product cards (refined) ----------
+   A 2 x 2 grid of horizontal cards: logo tile on the left; name, one-line
+   description and "Learn more" on the right. A thin red-to-teal line along the
+   top echoes the header. On phones the cards stack in one column. */
+.product-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  max-width: none;
+  gap: 1.5rem;
+}
+
+.product-grid .product-link {
+  position: relative;
+  flex-direction: row;
+  align-items: center;
+  gap: 1.5rem;
+  padding: 1.5rem 1.6rem;
+  overflow: hidden;
+  border: 1px solid rgba(var(--brand-rgb), 0.14);
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.92);
+  box-shadow: 0 6px 20px rgba(4, 43, 55, 0.06);
+  transition: box-shadow 0.25s ease, transform 0.25s ease, border-color 0.25s ease;
+}
+
+.product-grid .product-link::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, var(--mast-red) 0, var(--mast-red) 28%, var(--site-link) 28%);
+  transform: scaleX(0.18);
+  transform-origin: left;
+  transition: transform 0.35s ease;
+}
+
+.product-grid .product-link:hover,
+.product-grid .product-link:focus-visible {
+  border-color: rgba(var(--brand-rgb), 0.35);
+  box-shadow: 0 18px 38px rgba(4, 43, 55, 0.14);
+  transform: translateY(-4px);
+  text-decoration: none;
+}
+
+.product-grid .product-link:hover::before,
+.product-grid .product-link:focus-visible::before {
+  transform: scaleX(1);
+}
+
+.product-grid .product-link:focus-visible {
+  outline: 3px solid var(--site-link-hover);
+  outline-offset: 3px;
+}
+
+/* Logo tile */
+.product-grid .product-image {
+  flex: 0 0 auto;
+  width: 112px;
+  height: 112px;
+  aspect-ratio: auto;
+  border: 0;
+  border-radius: 16px;
+  background: var(--bar-light-bg);
+  transition: transform 0.25s ease;
+}
+
+.product-grid .product-link:hover .product-image,
+.product-grid .product-link:focus-visible .product-image {
+  box-shadow: none;
+  transform: scale(1.04);
+}
+
+.product-grid .product-image img {
+  width: 78%;
+  height: 78%;
+}
+
+.product-grid .product-image-missing {
+  padding: 0 0.5rem;
+  font-size: 1.05rem;
+  text-align: center;
+}
+
+.product-text {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  min-width: 0;
+}
+
+.product-grid .product-name {
+  margin: 0;
+  font-size: clamp(1.2rem, 1.8vw, 1.4rem);
+  color: var(--bar-light-text);
+}
+
+.product-summary {
+  font-size: 0.97rem;
+  line-height: 1.55;
+  color: var(--bar-dark-muted);
+}
+
+.product-cta {
+  margin-top: 0.35rem;
+  color: var(--site-link);
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+.product-cta::after {
+  content: "\2192";
+  display: inline-block;
+  margin-left: 0.35rem;
+  transition: transform 0.2s ease;
+}
+
+.product-grid .product-link:hover .product-cta::after,
+.product-grid .product-link:focus-visible .product-cta::after {
+  transform: translateX(4px);
+}
+
+/* Narrower screens: one card per row */
+@media (max-width: 900px) {
+  .product-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 480px) {
+  .product-grid .product-link {
+    gap: 1rem;
+    padding: 1.15rem;
+  }
+
+  .product-grid .product-image {
+    width: 76px;
+    height: 76px;
+    border-radius: 12px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .product-grid .product-link,
+  .product-grid .product-link::before,
+  .product-grid .product-image,
+  .product-cta::after {
+    transition: none;
+  }
+}
+
+/* ---------- Our story: compact event buttons (so the whole timeline fits one screen) ---------- */
+.story-hero {
+  margin-bottom: 1.75rem;
+}
+
+.layout-timeline .page-content {
+  padding-top: 1.75rem;
+}
+
+.story-era-header {
+  padding: 1rem 0.75rem 0.65rem;
+}
+
+.story-events {
+  gap: 0.4rem;
+  padding: 0 0.4rem;
+}
+
+.story-event-button {
+  flex-direction: row;
+  align-items: baseline;
+  gap: 0.5rem;
+  padding: 0.5rem 0.7rem;
+}
+
+.story-event-short {
+  font-size: 0.92rem;
+  font-weight: 600;
+  line-height: 1.3;
+  color: var(--bar-light-text);
+}
+
+/* The full title shows in the panel; on phones it replaces the short label */
+.story-event-title {
+  display: none;
+}
+
+.story-details {
+  margin-top: 1.5rem;
+}
+
+.story-panel {
+  padding: 1.3rem 1.6rem;
+}
+
+.story-panel-year {
+  font-size: clamp(1.7rem, 3vw, 2.2rem);
+}
+
+@media (max-width: 680px) {
+  .story-event-button {
+    flex-direction: column;
+    gap: 0.1rem;
+  }
+
+  .story-event-short {
+    display: none;
+  }
+
+  .story-event-title {
+    display: block;
+  }
+}
+
+/* Slightly tighter spacing on the story page */
+.layout-timeline .page-content {
+  padding-top: 1.25rem;
+}
+
+.layout-timeline .story-hero {
+  margin-bottom: 1.4rem;
+}
+
+.layout-timeline .story-title {
+  margin-bottom: 0.5rem;
+}
+
+.layout-timeline .story-details {
+  margin-top: 1.1rem;
+}
+
+/* A thin line between groups of links in a drop-down (e.g. DPI pages / products) */
+.masthead-submenu .has-divider {
+  margin-top: 0.35rem;
+  padding-top: 0.35rem;
+  border-top: 1px solid rgba(var(--brand-rgb), 0.14);
+}
+
+@media (max-width: 780px) {
+  .masthead-submenu .has-divider {
+    border-top-color: rgba(255, 255, 255, 0.12);
+  }
+}
+
+/* ---------- Insights pages: News, Articles and blog, Publications ---------- */
+.news-author {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--bar-dark-muted);
+}
+
+.post-list .news-grid {
+  margin-top: 0;
+}
+
+.post-list-empty {
+  padding: 2rem;
+  border-radius: 16px;
+  background: var(--bar-light-bg);
+  text-align: center;
+  color: var(--bar-dark-muted);
+}
+
+.publication-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 1.25rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.publication-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 1.1rem;
+  height: 100%;
+  padding: 1.4rem 1.5rem;
+  border: 1px solid rgba(var(--brand-rgb), 0.14);
+  border-radius: 16px;
+  background: #ffffff;
+  color: inherit;
+  text-decoration: none;
+  box-shadow: 0 6px 20px rgba(4, 43, 55, 0.05);
+  transition: box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+.publication-card:hover,
+.publication-card:focus-visible {
+  box-shadow: 0 14px 32px rgba(4, 43, 55, 0.12);
+  transform: translateY(-2px);
+  text-decoration: none;
+}
+
+.publication-icon {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 52px;
+  height: 52px;
+  border-radius: 12px;
+  background: var(--bar-light-bg);
+}
+
+.publication-icon svg {
+  width: 26px;
+  height: 26px;
+  fill: none;
+  stroke: var(--site-link);
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.publication-body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.publication-meta {
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--mast-red);
+}
+
+.publication-title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  line-height: 1.35;
+  color: var(--bar-light-text);
+}
+
+.publication-description {
+  font-size: 0.95rem;
+  line-height: 1.55;
+  color: var(--bar-dark-muted);
+}
+
+/* "Draft for review" banner, only shown on the review copy (draft_review: true in _config.yml) */
+.draft-banner {
+  padding: 0.5rem 1rem;
+  background: #fff3cd;
+  border-bottom: 1px solid #e6c65c;
+  color: #5c4500;
+  font-size: 0.9rem;
+  font-weight: 600;
+  text-align: center;
 }

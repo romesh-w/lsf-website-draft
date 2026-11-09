@@ -2,6 +2,7 @@
 layout: page
 title: Sahana
 start_date: 2004-12-26
+era: web-services
 end_date: 2009-12-31
 status: PAST
 summary: Sahana Agasti is a Free and Open Source Disaster Management system developed in the wake of the 2004 Asian Tsunami.

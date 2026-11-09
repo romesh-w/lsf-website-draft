@@ -1,6 +1,40 @@
 ---
 layout: default
 ---
-<section class="home home-shell">
+{%- comment -%}
+  Home page layout: full-width "bars" stacked down the page.
+  All words come from index.md. Design lives in assets/main.scss.
+  Bars alternate between a light and a dark colour automatically.
+  A bar with "type: products" or "type: news" also shows product cards or the latest news.
+{%- endcomment -%}
+<div class="home">
+  {%- for bar in page.bars %}
+  <section class="home-bar home-bar-{{ bar.type | default: 'text' }} home-bar-{{ forloop.index }}" id="{{ bar.id }}" aria-labelledby="{{ bar.id }}-heading">
+    <div class="wrapper home-bar-inner">
+      {%- if bar.eyebrow %}
+      <p class="home-bar-eyebrow">{{ bar.eyebrow | escape }}</p>
+      {%- endif %}
+      <h2 class="home-bar-heading" id="{{ bar.id }}-heading">{{ bar.heading | escape }}</h2>
+      {%- if bar.text %}
+      <div class="home-bar-text">{{ bar.text | markdownify }}</div>
+      {%- endif %}
+
+      {%- if bar.type == "products" %}
+      {%- include home-products.html names=bar.products %}
+      {%- elsif bar.type == "news" %}
+      {%- include home-news.html count=bar.count %}
+      {%- endif %}
+
+      {%- if bar.links %}
+      <div class="home-bar-links">
+        {%- for link in bar.links %}
+        <a class="home-bar-link" href="{{ link.url | relative_url }}">{{ link.label | escape }}</a>
+        {%- endfor %}
+      </div>
+      {%- endif %}
+    </div>
+  </section>
+  {%- endfor %}
+
   {{ content }}
-</section>
+</div>

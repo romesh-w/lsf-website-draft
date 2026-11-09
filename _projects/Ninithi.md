@@ -2,6 +2,7 @@
 layout: page
 title: Ninithi
 start_date: 2015-05-01
+era: incubator
 end_date: 2020-09-23
 status: PAST
 summary: The Ninithi is a free and opensource software developed to visualize and analyze the carbon allotropes used in nanotechnology.

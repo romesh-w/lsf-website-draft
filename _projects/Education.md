@@ -2,6 +2,7 @@
 layout: page
 title: Education
 start_date: 2018-10-01
+era: code-for-sri-lanka
 end_date: 2021-08-01
 status: PAST
 summary: Assisting Sri Lanka's Ministry of Education with a Student Information System

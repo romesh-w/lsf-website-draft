@@ -1,0 +1,43 @@
+# The main menu in the site header, in order.
+# Each item has a label and a url. An item can have "children": a drop-down list of sub-pages.
+
+- label: Home
+  url: /
+
+- label: About us
+  url: /about/
+  children:
+    - label: Our story
+      url: /about/
+    - label: Our team
+      url: /team/
+    - label: Our projects
+      url: /our-projects/
+
+- label: Products
+  url: /projects/
+  children:
+    - label: What is Digital Public Infrastructure
+      url: /digital-public-infrastructure/
+    - label: Our beliefs on DPI
+      url: /our-beliefs-on-dpi/
+    # "divider: true" draws a thin line above this item in the drop-down
+    - label: OpenNSW
+      url: /projects/OpenNSW/
+      divider: true
+    - label: OpenNDX
+      url: /projects/OpenNDX/
+    - label: OpenGovMail
+      url: /projects/OpenGovMail/
+    - label: OpenSuperApp
+      url: /projects/OpenSuperApp/
+
+- label: Insights
+  url: /news/
+  children:
+    - label: News
+      url: /news/
+    - label: Publications
+      url: /publications/
+    - label: Articles and blog
+      url: /articles/

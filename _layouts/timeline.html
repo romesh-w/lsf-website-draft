@@ -1,0 +1,113 @@
+---
+layout: default
+---
+{%- comment -%}
+  "Our story" timeline, designed to fit on one screen.
+  The five eras sit side by side as columns, joined by a coloured bar along the top.
+  Each era lists its events (year and title). Choosing an event shows its full
+  story in the panel underneath. On phones, the eras stack and each event shows
+  its story directly.
+  The eras and events come from _data/timeline.yml; the title, intro and
+  "full history" link come from the page (about/index.md). Design lives in assets/main.scss.
+{%- endcomment -%}
+{%- assign eras = site.data.timeline.eras -%}
+{%- assign events = site.data.timeline.events -%}
+<article class="page-shell story">
+  <header class="story-hero">
+    <h1 class="story-title">{{ page.title | escape }}</h1>
+    {%- if page.intro %}
+    <p class="story-intro">{{ page.intro | escape }}</p>
+    {%- endif %}
+  </header>
+
+  <div class="story-board">
+    <ol class="story-eras">
+      {%- assign n = 0 %}
+      {%- for era in eras %}
+      <li class="story-era era-{{ forloop.index }}">
+        <div class="story-era-header">
+          <span class="story-era-years">{{ era.years | escape }}</span>
+          <h2 class="story-era-title">{{ era.label | escape }}</h2>
+        </div>
+        <ul class="story-events">
+          {%- for event in events %}
+          {%- if event.era == era.id %}
+          {%- assign n = n | plus: 1 %}
+          <li class="story-event{% if event.highlight %} is-highlight{% endif %}">
+            <button type="button" class="story-event-button" aria-controls="story-panel-{{ n }}" aria-expanded="false" data-panel="story-panel-{{ n }}">
+              <span class="story-event-year">{{ event.year }}</span>
+              <span class="story-event-short">{{ event.short | default: event.title | escape }}</span>
+              <span class="story-event-title">{{ event.title | escape }}</span>
+            </button>
+            <p class="story-event-text">{{ event.text | escape }}</p>
+          </li>
+          {%- endif %}
+          {%- endfor %}
+        </ul>
+      </li>
+      {%- endfor %}
+    </ol>
+
+    <div class="story-details">
+      {%- assign n = 0 %}
+      {%- for era in eras %}
+      {%- assign era_index = forloop.index %}
+      {%- for event in events %}
+      {%- if event.era == era.id %}
+      {%- assign n = n | plus: 1 %}
+      <section class="story-panel era-{{ era_index }}" id="story-panel-{{ n }}" aria-label="{{ event.year }}: {{ event.title | escape }}">
+        <span class="story-panel-era">{{ era.label | escape }}</span>
+        <p class="story-panel-year">{{ event.year }}</p>
+        <h3 class="story-panel-title">{{ event.title | escape }}</h3>
+        <p class="story-panel-text">{{ event.text | escape }}</p>
+        {%- if event.link %}
+        {%- if event.link.url contains "://" %}
+        <a class="timeline-link" href="{{ event.link.url }}" target="_blank" rel="noopener noreferrer">{{ event.link.label | escape }}</a>
+        {%- else %}
+        <a class="timeline-link" href="{{ event.link.url | relative_url }}">{{ event.link.label | escape }}</a>
+        {%- endif %}
+        {%- endif %}
+      </section>
+      {%- endif %}
+      {%- endfor %}
+      {%- endfor %}
+    </div>
+  </div>
+
+  {%- if page.full_history_url %}
+  <p class="story-more">
+    <a class="home-bar-link" href="{{ page.full_history_url | relative_url }}">{{ page.full_history_label | default: "Read our full history" | escape }}</a>
+  </p>
+  {%- endif %}
+</article>
+
+<script>
+  (function () {
+    var board = document.querySelector('.story-board');
+    if (!board) return;
+    var buttons = board.querySelectorAll('.story-event-button');
+    var panels = board.querySelectorAll('.story-panel');
+    board.classList.add('is-interactive');
+
+    function show(button) {
+      var id = button.getAttribute('data-panel');
+      buttons.forEach(function (b) {
+        var on = b === button;
+        b.setAttribute('aria-expanded', on ? 'true' : 'false');
+        b.parentElement.classList.toggle('is-selected', on);
+      });
+      panels.forEach(function (p) { p.hidden = p.id !== id; });
+    }
+
+    buttons.forEach(function (button) {
+      button.addEventListener('click', function () { show(button); });
+      button.addEventListener('mouseenter', function () {
+        if (window.matchMedia('(hover: hover)').matches) show(button);
+      });
+    });
+
+    /* Start with the most recent highlighted moment selected */
+    var highlighted = board.querySelectorAll('.story-event.is-highlight .story-event-button');
+    show(highlighted.length ? highlighted[highlighted.length - 1] : buttons[0]);
+  })();
+</script>

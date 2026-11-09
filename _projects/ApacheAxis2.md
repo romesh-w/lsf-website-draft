@@ -2,6 +2,7 @@
 layout: page
 title: Apache Axis2
 start_date: 2004-08-01
+era: web-services
 end_date: 2010-12-31
 status: PAST
 summary: Apache Axis2 is a core engine for Web services that supports SOAP 1.1, SOAP 1.2, REST, and other communication protocols.

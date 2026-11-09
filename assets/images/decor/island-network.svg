@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 220 300" fill="none">
+  <!-- A stylised outline of Sri Lanka, with a network of connected places inside it -->
+  <path d="M95 10 C84 12 70 16 62 26 C58 32 66 36 74 36 C70 48 66 62 63 78 C54 82 42 90 40 96 C46 100 54 100 58 102 C55 120 52 142 52 164 C52 190 58 214 68 236 C78 256 94 272 114 283 C128 290 146 286 160 272 C174 258 182 238 186 214 C190 190 188 164 180 140 C172 114 158 90 142 68 C128 48 112 26 95 10 Z" stroke="#007895" stroke-width="2" stroke-opacity="0.55" fill="#007895" fill-opacity="0.05"/>
+  <g stroke="#007895" stroke-opacity="0.45" stroke-width="1.2">
+    <path d="M80 32 L100 96 L160 112 L178 172 L114 186 L62 206 L92 264 L140 260 L178 172"/>
+    <path d="M100 96 L114 186 L140 260"/>
+    <path d="M100 96 L62 206"/>
+    <path d="M160 112 L114 186"/>
+    <path d="M62 206 L140 260"/>
+    <path d="M80 32 L160 112"/>
+  </g>
+  <g fill="#007895">
+    <circle cx="80" cy="32" r="4"/>
+    <circle cx="100" cy="96" r="4.5"/>
+    <circle cx="160" cy="112" r="4"/>
+    <circle cx="178" cy="172" r="4"/>
+    <circle cx="114" cy="186" r="5.5"/>
+    <circle cx="62" cy="206" r="6.5"/>
+    <circle cx="92" cy="264" r="4"/>
+    <circle cx="140" cy="260" r="4"/>
+  </g>
+  <g stroke="#007895" stroke-opacity="0.35">
+    <circle cx="62" cy="206" r="12"/>
+    <circle cx="62" cy="206" r="20" stroke-opacity="0.18"/>
+    <circle cx="114" cy="186" r="11"/>
+  </g>
+</svg>

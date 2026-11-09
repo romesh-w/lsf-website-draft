@@ -3,11 +3,18 @@
   {% include head.html %}
   <body class="site-shell{% if page.layout %} layout-{{ page.layout }}{% endif %}">
     <a class="skip-link" href="#main-content">Skip to content</a>
+    {%- if site.draft_review %}
+    <div class="draft-banner" role="note">{{ site.draft_review_text | default: "Draft for review. This is not the live opensource.lk website." | escape }}</div>
+    {%- endif %}
     {% include navigation.html %}
     <main id="main-content" class="page-content" aria-label="Content">
+      {%- if page.layout == "home" %}
+      {{ content }}
+      {%- else %}
       <div class="wrapper content-shell">
         {{ content }}
       </div>
+      {%- endif %}
     </main>
     {% include footer.html %}
   </body>

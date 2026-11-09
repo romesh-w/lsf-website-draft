@@ -1,0 +1,38 @@
+---
+layout: default
+---
+{%- comment -%}
+  Publications page. The list comes from the page's "publications" (publications.md).
+  Design lives in assets/main.scss.
+{%- endcomment -%}
+<article class="page-shell post-list">
+  <header class="story-hero">
+    <h1 class="story-title">{{ page.title | escape }}</h1>
+    {%- if page.intro %}
+    <p class="story-intro">{{ page.intro | escape }}</p>
+    {%- endif %}
+  </header>
+
+  <ul class="publication-list">
+    {%- for pub in page.publications %}
+    <li>
+      {%- if pub.url contains "://" %}
+      <a class="publication-card" href="{{ pub.url }}" target="_blank" rel="noopener noreferrer">
+      {%- else %}
+      <a class="publication-card" href="{{ pub.url | relative_url }}">
+      {%- endif %}
+        <span class="publication-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><path d="M7 3h7l5 5v12a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1Z"/><path d="M14 3v5h5M9 13h6M9 17h6"/></svg>
+        </span>
+        <span class="publication-body">
+          <span class="publication-meta">{{ pub.kind | escape }}{% if pub.year %} · {{ pub.year }}{% endif %}</span>
+          <span class="publication-title">{{ pub.title | escape }}</span>
+          {%- if pub.description %}
+          <span class="publication-description">{{ pub.description | escape }}</span>
+          {%- endif %}
+        </span>
+      </a>
+    </li>
+    {%- endfor %}
+  </ul>
+</article>

@@ -1,0 +1,44 @@
+{%- comment -%}
+  Cards for news items, articles and blog posts (files in _posts/).
+  "posts" is the list to show. A post with "external_url" links to that page on another
+  website (opening in a new tab) and shows its "source" next to the date; "author" is
+  shown when set.
+{%- endcomment -%}
+<ul class="news-grid">
+  {%- for post in include.posts %}
+  {%- if post.image %}
+  {%- assign image_path = "/" | append: post.image %}
+  {%- assign image_file = site.static_files | where: "path", image_path | first %}
+  {%- else %}
+  {%- assign image_file = nil %}
+  {%- endif %}
+  <li class="news-card">
+    {%- if post.external_url %}
+    <a class="news-link" href="{{ post.external_url }}" target="_blank" rel="noopener noreferrer">
+    {%- else %}
+    <a class="news-link" href="{{ post.url | relative_url }}">
+    {%- endif %}
+      <span class="news-image">
+        {%- if image_file %}
+        <img src="{{ image_path | relative_url }}" alt="{{ post.image_alt | escape }}" loading="lazy">
+        {%- else %}
+        <span class="news-image-missing" aria-hidden="true">{{ post.source | default: "LSF" }}</span>
+        {%- endif %}
+      </span>
+      <span class="news-body">
+        <span class="news-meta">
+          <time class="news-date" datetime="{{ post.date | date_to_xmlschema }}">{{ post.date | date: "%-d %B %Y" }}</time>
+          {%- if post.source %}<span class="news-source">{{ post.source | escape }}</span>{% endif %}
+        </span>
+        <span class="news-title">{{ post.title | escape }}{% if post.external_url %}<span class="visually-hidden"> (opens {{ post.source | default: "another website" }} in a new tab)</span>{% endif %}</span>
+        {%- if post.author %}
+        <span class="news-author">By {{ post.author | escape }}</span>
+        {%- endif %}
+        {%- if post.summary %}
+        <span class="news-summary">{{ post.summary | escape }}</span>
+        {%- endif %}
+      </span>
+    </a>
+  </li>
+  {%- endfor %}
+</ul>

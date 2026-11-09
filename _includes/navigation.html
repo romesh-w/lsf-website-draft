@@ -1,30 +1,46 @@
-<header class="site-header" role="banner">
-  <div class="wrapper header-shell">
-    {%- assign default_paths = site.pages | map: "path" -%}
-    {%- assign page_paths = site.header_pages | default: default_paths -%}
-    <a class="site-title" rel="author" href="{{ "/" | relative_url }}" aria-label="{{ site.title | escape }} Home">
-      <img class="site-mark" src="{{ '/assets/images/LSF.jpg' | relative_url }}" alt="{{ site.title | escape }}">
-    </a>
+{%- comment -%}
+  Site header (every page): a red block on the left with the logo and the
+  organisation's name, then the dark menu bar.
+  The menu items come from _data/navigation.yml (an item with "children" gets a
+  drop-down). The name comes from _config.yml. Design lives in assets/main.scss.
+{%- endcomment -%}
+{%- assign current_url = page.url | relative_url -%}
+<header class="masthead" role="banner">
+  <a class="masthead-brand" href="{{ '/' | relative_url }}" aria-label="{{ site.title | escape }}, home">
+    <img class="masthead-logo" src="{{ '/assets/images/LSF.jpg' | relative_url }}" alt="">
+    <span class="masthead-name">{{ site.title | escape }}</span>
+  </a>
 
-    {%- if page_paths -%}
-      <nav class="site-nav" aria-label="Primary">
-        <input type="checkbox" id="nav-trigger" class="nav-trigger" />
-        <label class="menu-toggle" for="nav-trigger">
-          <span class="menu-icon" aria-hidden="true"></span>
-          <span class="menu-label">Menu</span>
-        </label>
-
-        <div class="trigger">
-          {%- assign current_url = page.url | relative_url -%}
-          {%- for path in page_paths -%}
-            {%- assign my_page = site.pages | where: "path", path | first -%}
-            {%- if my_page.title -%}
-            {%- assign page_url = my_page.url | relative_url -%}
-            <a class="page-link{% if page_url == current_url %} is-active{% endif %}" href="{{ page_url }}"{% if page_url == current_url %} aria-current="page"{% endif %}>{{ my_page.title | escape }}</a>
-            {%- endif -%}
-          {%- endfor -%}
-        </div>
-      </nav>
-    {%- endif -%}
-  </div>
+  <nav class="masthead-nav" aria-label="Primary">
+    <input type="checkbox" id="nav-trigger" class="masthead-nav-trigger">
+    <label class="masthead-menu-toggle" for="nav-trigger">
+      <span class="masthead-menu-bars" aria-hidden="true"></span>
+      <span class="masthead-menu-label">Menu</span>
+    </label>
+    <ul class="masthead-links">
+      {%- for item in site.data.navigation %}
+      {%- assign item_url = item.url | relative_url %}
+      {%- assign item_active = false %}
+      {%- if item_url == current_url %}{% assign item_active = true %}{% endif %}
+      {%- for child in item.children %}
+        {%- assign child_url = child.url | relative_url %}
+        {%- if child_url == current_url %}{% assign item_active = true %}{% endif %}
+      {%- endfor %}
+      <li class="masthead-item{% if item.children %} has-children{% endif %}">
+        <a class="masthead-link{% if item_active %} is-active{% endif %}" href="{{ item_url }}"{% if item_url == current_url and item.children == nil %} aria-current="page"{% endif %}>
+          {{- item.label | escape -}}
+          {%- if item.children %}<svg class="masthead-caret" viewBox="0 0 12 12" aria-hidden="true"><path d="M2.5 4.5 6 8l3.5-3.5"/></svg>{% endif -%}
+        </a>
+        {%- if item.children %}
+        <ul class="masthead-submenu">
+          {%- for child in item.children %}
+          {%- assign child_url = child.url | relative_url %}
+          <li{% if child.divider %} class="has-divider"{% endif %}><a class="masthead-sublink{% if child_url == current_url %} is-active{% endif %}" href="{{ child_url }}"{% if child_url == current_url %} aria-current="page"{% endif %}>{{ child.label | escape }}</a></li>
+          {%- endfor %}
+        </ul>
+        {%- endif %}
+      </li>
+      {%- endfor %}
+    </ul>
+  </nav>
 </header>

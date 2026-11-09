@@ -1,0 +1,61 @@
+---
+layout: default
+---
+{%- comment -%}
+  "Our projects" page: every past project (those with an end_date), grouped by era.
+  The eras come from _data/timeline.yml, so they match the "Our story" timeline.
+  Each project's "era" is set in its own file in _projects/.
+  Words come from our-projects.md and the project files; design lives in assets/main.scss.
+{%- endcomment -%}
+{%- assign past_projects = site.projects | where_exp: "p", "p.end_date != nil" | sort: "start_date" -%}
+<article class="page-shell our-projects">
+  <header class="story-hero">
+    <h1 class="story-title">{{ page.title | escape }}</h1>
+    {%- if page.intro %}
+    <p class="story-intro">{{ page.intro | escape }}</p>
+    {%- endif %}
+  </header>
+
+  {%- for era in site.data.timeline.eras %}
+  {%- assign era_projects = past_projects | where: "era", era.id %}
+  {%- if era_projects.size > 0 %}
+  <section class="project-era era-{{ forloop.index }}" aria-labelledby="era-{{ era.id }}">
+    <div class="project-era-header">
+      <span class="project-era-years">{{ era.years | escape }}</span>
+      <h2 class="project-era-title" id="era-{{ era.id }}">{{ era.label | escape }}</h2>
+    </div>
+    <ul class="project-grid">
+      {%- for project in era_projects %}
+      {%- assign image_path = "/" | append: project.image %}
+      {%- assign image_file = site.static_files | where: "path", image_path | first %}
+      <li class="project-card">
+        <a class="project-link" href="{{ project.url | relative_url }}">
+          <span class="project-image">
+            {%- if image_file %}
+            <img src="{{ image_path | relative_url }}" alt="" loading="lazy">
+            {%- else %}
+            <span class="project-image-missing" aria-hidden="true">{{ project.title }}</span>
+            {%- endif %}
+          </span>
+          <span class="project-body">
+            <span class="project-years">{{ project.start_date | date: "%Y" }}–{{ project.end_date | date: "%Y" }}</span>
+            <span class="project-name">{{ project.title | escape }}</span>
+            {%- if project.summary %}
+            <span class="project-summary">{{ project.summary | escape }}</span>
+            {%- endif %}
+          </span>
+        </a>
+      </li>
+      {%- endfor %}
+    </ul>
+  </section>
+  {%- endif %}
+  {%- endfor %}
+
+  {%- if page.products_link_url %}
+  <aside class="project-products-note">
+    <p>{{ page.products_note | escape }}</p>
+    <a class="home-bar-link" href="{{ page.products_link_url | relative_url }}">{{ page.products_link_label | escape }}</a>
+  </aside>
+  {%- endif %}
+</article>

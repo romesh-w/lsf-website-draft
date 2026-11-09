@@ -2,6 +2,7 @@
 layout: page
 title: Dalesa
 start_date: 2003-06-01
+era: web-services
 end_date: 2007-12-31
 status: PAST
 summary: Dalesa is a Free and Open Source Peer-to-Peer web caching software that improves web performance in local area networks.

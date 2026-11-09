@@ -1,0 +1,40 @@
+{%- comment -%}
+  One person on the team page.
+  Uses from the person's entry in _data/: name, position, image, shortbio, moreinfo,
+  projects, and an optional "summary" (one short sentence shown on the card).
+  Without a summary, the start of the bio is shown.
+{%- endcomment -%}
+{%- assign person = include.person -%}
+{%- assign role = person.position | default: include.fallback_role -%}
+<li class="person-card" id="{{ include.key }}">
+  {%- if person.image %}
+  <img class="person-photo" src="{{ person.image | relative_url }}" alt="Photo of {{ person.name | escape }}" loading="lazy">
+  {%- endif %}
+  <div class="person-body">
+    <h3 class="person-name">{{ person.name | escape }}</h3>
+    {%- if role %}
+    <p class="person-role">{{ role | escape }}</p>
+    {%- endif %}
+    {%- if person.summary %}
+    <p class="person-summary">{{ person.summary | escape }}</p>
+    {%- elsif person.shortbio %}
+    <p class="person-summary">{{ person.shortbio | strip_html | strip_newlines | truncatewords: 20 }}</p>
+    {%- endif %}
+    {%- if person.shortbio %}
+    <details class="person-bio">
+      <summary class="person-bio-toggle"><span class="person-bio-open">Read bio</span><span class="person-bio-close">Close bio</span></summary>
+      <div class="person-bio-body">
+        {{ person.shortbio | markdownify }}
+        {%- if person.projects %}
+        <p class="person-projects">Projects:
+          {% for p in person.projects %}<a href="{{ '/projects/' | append: p | append: '/' | relative_url }}">{{ p }}</a>{% unless forloop.last %}, {% endunless %}{% endfor %}
+        </p>
+        {%- endif %}
+        {%- if person.moreinfo %}
+        <p class="person-more"><a href="{{ person.moreinfo }}" target="_blank" rel="noopener noreferrer">{% if person.moreinfo contains "linkedin.com" %}LinkedIn profile{% else %}More about {{ person.name | escape }}{% endif %}</a></p>
+        {%- endif %}
+      </div>
+    </details>
+    {%- endif %}
+  </div>
+</li>

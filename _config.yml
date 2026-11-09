@@ -1,4 +1,5 @@
 title: Lanka Software Foundation
+tagline: Open source for public good
 author: Lanka Software Foundation
 email: contact@opensource.lk
 description: >- # this means to ignore newlines until "baseurl:"
@@ -15,10 +16,8 @@ github_username: LSFLK
 theme: minima
 
 # Force custom navigation
-header_pages:
-  - about/index.md
-  - team/index.md
-  - projects.md
+# The main menu is set in _data/navigation.yml
+header_pages: []
 
 # Collections
 collections:

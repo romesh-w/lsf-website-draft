@@ -1,0 +1,120 @@
+# The "Our story" timeline (about/index.md).
+#
+# eras: the chapters of LSF's history, in order. Each event belongs to one era.
+# events: in date order. Each has a year, an era (matching an era id), a title and
+# a short text. "short" is the brief label shown in the timeline (the full title shows
+# when the event is chosen). Optional: "highlight: true" for the most important moments, and a
+# "link" with a label and url.
+
+eras:
+  - id: founding
+    label: The founding
+    years: 2001–2003
+  - id: web-services
+    label: Web services and Sahana
+    years: 2003–2013
+  - id: incubator
+    label: Open source incubator
+    years: 2013–2018
+  - id: code-for-sri-lanka
+    label: Code for Sri Lanka
+    years: 2019–2024
+  - id: dpi
+    label: Digital Public Infrastructure
+    years: 2025 onwards
+
+events:
+  - year: 2001
+    era: founding
+    title: An idea takes shape
+    short: The idea
+    text: After 16 years in the US, Sanjiva Weerawarana returns to Sri Lanka and, with Jivaka Weeratunge, sets out to help Sri Lankan engineers create open source software for the world.
+
+  - year: 2003
+    era: founding
+    title: LSF is founded
+    short: LSF is founded
+    text: The Lanka Software Foundation is registered as a not-for-profit. Its first project, Apache Axis C++, begins.
+
+  - year: 2004
+    era: web-services
+    title: Apache Axis2 is designed in Colombo
+    short: Apache Axis2
+    text: The architecture of Apache Axis2, the next generation of the Apache web services engine, is introduced at a summit in Colombo. LSF develops it with support from the Swedish International Development Agency.
+    highlight: true
+    link:
+      label: About Apache Axis2
+      url: /projects/ApacheAxis2/
+
+  - year: 2004
+    era: web-services
+    title: Sahana is born after the tsunami
+    short: Sahana is born
+    text: In the wake of the Indian Ocean tsunami, LSF builds Sahana, a free and open source disaster management system used to trace missing people and coordinate relief.
+    highlight: true
+    link:
+      label: About Sahana
+      url: /projects/Sahana/
+
+  - year: 2005
+    era: web-services
+    title: WSO2 is founded
+    short: WSO2 is founded
+    text: WSO2 launches, built on the Axis2 work, and grows into a global open source company used by enterprises and governments worldwide.
+    highlight: true
+
+  - year: 2005
+    era: web-services
+    title: Sahana goes global
+    short: Sahana goes global
+    text: Sahana is deployed after the 2005 Pakistan earthquake, and later after the 2010 Haiti earthquake and Hurricane Sandy in 2012.
+
+  - year: 2009
+    era: web-services
+    title: Sahana gets its own home
+    short: Sahana Foundation
+    text: LSF hands Sahana over to the newly formed Sahana Software Foundation to carry it forward.
+
+  - year: 2013
+    era: incubator
+    title: An open source incubator
+    short: Incubator begins
+    text: LSF begins helping Sri Lankan open source projects grow into global businesses, including Ninithi, a nanotechnology modelling tool.
+
+  - year: 2018
+    era: incubator
+    title: 15 years of LSF
+    short: 15 years of LSF
+    text: A mini-book celebrates LSF's first 15 years.
+    link:
+      label: See our publications
+      url: /publications/
+
+  - year: 2019
+    era: code-for-sri-lanka
+    title: Running Sri Lanka's elections
+    short: Election system
+    text: LSF's election management system is used to run the 2019 Presidential Election and the 2020 Parliamentary Election.
+    highlight: true
+    link:
+      label: About the project
+      url: /projects/Elections/
+
+  - year: 2025
+    era: dpi
+    title: Building DPI for the world
+    short: DPI products
+    text: LSF turns to open source Digital Public Infrastructure, building OpenGovMail, OpenNDX, OpenSuperApp and OpenNSW.
+    link:
+      label: See our products
+      url: /projects/
+
+  - year: 2026
+    era: dpi
+    title: The National Single Window goes live
+    short: National Single Window
+    text: Sri Lanka launches its National Single Window for Trade, built on OpenNSW.
+    highlight: true
+    link:
+      label: Read the news
+      url: https://www.newswire.lk/2026/11/05/sri-lanka-launches-national-single-window-for-trade-system/

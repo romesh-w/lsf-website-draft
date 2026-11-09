@@ -2,6 +2,7 @@
 layout: page
 title: Elections
 start_date: 2018-11-01
+era: code-for-sri-lanka
 end_date: 2022-05-01
 status: PAST
 summary: Helping the Election Commission to build an integrated election management system to run Sri Lanka’s elections
